@@ -47,7 +47,7 @@ export default async function SearchPage(props: PageProps) {
              Results for <span className="text-indigo-600">{paramsSafe.origin}</span> to <span className="text-indigo-600">{paramsSafe.destination}</span>
            </h1>
            <p className="text-slate-500">
-             {flights.length} flights found • {paramsSafe.departureDate}
+             {flights.length} flights found • {paramsSafe.date}
            </p>
         </div>
 
