@@ -1,12 +1,10 @@
 "use client";
-
-import { TransformedFlight } from "@/lib/types";
 import { useState, useMemo } from "react";
 import { FlightCard } from "@/components/flights/flight-card";
 import { PriceGraph } from "@/components/viz/price-graph";
-import { Button } from "@/components/ui/button";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TransformedFlight } from "@/app/types/amadeus.types";
 
 interface SearchResultsProps {
   initialFlights: TransformedFlight[];
@@ -31,7 +29,7 @@ export function SearchResults({ initialFlights }: SearchResultsProps) {
 
   // Derived filtered data
   const filteredFlights = useMemo(() => {
-    let res = flights.filter(f => {
+    const res = flights.filter(f => {
        if (f.amount > maxPrice) return false;
        
        if (stopsFilter === "0" && f.stops !== 0) return false;
