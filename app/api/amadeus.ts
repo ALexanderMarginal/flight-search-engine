@@ -1,5 +1,5 @@
-import { SearchParams, FlightOffer } from "../../lib/types";
-import { AmadeusTokenResponse, TransformedFlight } from "../types/amadeus.types";
+import { SearchParams } from "../../lib/types";
+import { AmadeusTokenResponse, TransformedFlight, FlightOffer } from "../types/amadeus.types";
 
 const AMADEUS_BASE_URL = "https://test.api.amadeus.com/v2";
 

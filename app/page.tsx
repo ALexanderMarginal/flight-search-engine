@@ -1,5 +1,6 @@
 import { SearchForm } from "@/components/search/search-form";
 import { Plane } from "lucide-react";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -23,7 +24,9 @@ export default function Home() {
         </div>
 
         <div className="animate-up" style={{ animationDelay: '0.1s' }}>
-          <SearchForm />
+          <Suspense fallback={<div className="h-20 w-full bg-white rounded-2xl animate-pulse"/>}>
+            <SearchForm />
+          </Suspense>
         </div>
         
         {/* Social Proof / Trust Indicators */}

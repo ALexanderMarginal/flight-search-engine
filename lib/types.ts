@@ -1,20 +1,3 @@
-export interface FlightOffer {
-  id: string;
-  price: {
-    currency: string;
-    total: string;
-    grandTotal: string;
-  };
-  itineraries: {
-    duration: string;
-    segments: Segment[];
-  }[];
-  numberOfBookableSeats: number;
-  validatingAirlineCodes: string[];
-}
-
-
-
 export interface SearchParams {
   origin: string;
   destination: string;

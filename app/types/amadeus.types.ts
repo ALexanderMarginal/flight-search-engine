@@ -50,3 +50,18 @@ export interface TransformedFlight {
   stops: number;
   segments: Segment[];
 }
+
+export interface FlightOffer {
+  id: string;
+  price: {
+    currency: string;
+    total: string;
+    grandTotal: string;
+  };
+  itineraries: {
+    duration: string;
+    segments: Segment[];
+  }[];
+  numberOfBookableSeats: number;
+  validatingAirlineCodes: string[];
+}
