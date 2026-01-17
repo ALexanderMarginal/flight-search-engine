@@ -1,12 +1,13 @@
-import { SearchParams } from "../../lib/types";
-import { AmadeusTokenResponse, TransformedFlight, FlightOffer } from "../types/amadeus.types";
+
+import { SearchParams } from "@/types/search.types";
+import { AmadeusTokenResponse, TransformedFlight, FlightOffer } from "../../types/amadeus.types";
 
 const AMADEUS_BASE_URL = "https://test.api.amadeus.com/v2";
 
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
 
-const getAccessToken = async (): Promise<string | null> => {
+const getAccessToken = async (forceRefresh: boolean = false): Promise<string | null> => {
   const clientId = process.env.AMADEUS_CLIENT_ID;
   const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
   
@@ -16,7 +17,7 @@ const getAccessToken = async (): Promise<string | null> => {
     return null;
   }
 
-  if (cachedToken && Date.now() < tokenExpiry) {
+  if (!forceRefresh && cachedToken && Date.now() < tokenExpiry) {
     return cachedToken;
   }
 
@@ -26,7 +27,6 @@ const getAccessToken = async (): Promise<string | null> => {
   params.append("client_secret", clientSecret);
 
   try {
-    debugger;
     const res = await fetch("https://test.api.amadeus.com/v1/security/oauth2/token", {
       method: "POST",
       headers: {
@@ -55,7 +55,7 @@ const getAccessToken = async (): Promise<string | null> => {
 }
 
 export const fetchFlights = async (params: SearchParams): Promise<TransformedFlight[]> => {
-  const token = await getAccessToken();
+  let token = await getAccessToken();
   
   const url = new URL(`${AMADEUS_BASE_URL}/shopping/flight-offers`);
   url.searchParams.append("originLocationCode", params.origin);
@@ -72,12 +72,27 @@ export const fetchFlights = async (params: SearchParams): Promise<TransformedFli
 
   console.log(`Fetching flights: ${url.toString()}`);
 
-  const res = await fetch(url.toString(), {
+  let res = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
     },
     next: { revalidate: 300 } 
   });
+
+  // Handle Token Expiry
+  if (res.status === 401) {
+    console.log("Access token expired. Refreshing token...");
+    token = await getAccessToken(true);
+    
+    if (token) {
+        res = await fetch(url.toString(), {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            next: { revalidate: 300 } 
+        });
+    }
+  }
 
   if (!res.ok) {
     const err = await res.text();

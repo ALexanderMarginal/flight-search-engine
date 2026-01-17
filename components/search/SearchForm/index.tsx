@@ -5,30 +5,43 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plane, Calendar, Search } from "lucide-react";
+import { SearchFormState } from "./types";
+
+
+const getTodayDate = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
 
 export function SearchForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [origin, setOrigin] = useState(searchParams.get("origin") || "MAD");
-  const [destination, setDestination] = useState(searchParams.get("destination") || "BCN");
-  const [date, setDate] = useState(searchParams.get("date") || "2025-06-01");
+  const [searchState, setSearchState] = useState<SearchFormState>({
+    origin: searchParams.get("origin") || "MAD",
+    destination: searchParams.get("destination") || "BCN",
+    date: searchParams.get("date") || getTodayDate(),
+  })
+
   const [loading, setLoading] = useState(false);
+
+  const updateSearchState = (field: keyof SearchFormState, value: string): void => {    
+    const newState = { ...searchState };
+    newState[field] = value;
+    setSearchState(newState);
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
-    const params = new URLSearchParams();
-    if (origin) params.set("origin", origin.toUpperCase());
-    if (destination) params.set("destination", destination.toUpperCase());
-    if (date) params.set("date", date);
-    
-    router.push(`/search?${params.toString()}`);
+    router.push(`/search?origin=${searchState.origin}&destination=${searchState.destination}&date=${searchState.date}`);
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSearch} className="w-full max-w-4xl mx-auto">
+    <form onSubmit={handleSearch}>
       <div className="bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row gap-2 transition-all hover:shadow-2xl hover:shadow-indigo-500/10 dark:bg-slate-900">
         
         <div className="flex-1 relative group">
@@ -36,8 +49,8 @@ export function SearchForm() {
           <Input 
             placeholder="From (e.g. LHR)" 
             className="pl-10 border-0 shadow-none focus:ring-0 rounded-xl bg-slate-50 focus:bg-white"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
+            value={searchState.origin}
+            onChange={(e) => updateSearchState("origin", e.target.value)}
             required
           />
         </div>
@@ -47,8 +60,8 @@ export function SearchForm() {
           <Input 
             placeholder="To (e.g. JFK)" 
             className="pl-10 border-0 shadow-none focus:ring-0 rounded-xl bg-slate-50 focus:bg-white"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
+            value={searchState.destination}
+            onChange={(e) => updateSearchState("destination", e.target.value)}
             required
           />
         </div>
@@ -58,8 +71,8 @@ export function SearchForm() {
           <Input 
             type="date"
             className="pl-10 border-0 shadow-none focus:ring-0 rounded-xl bg-slate-50 focus:bg-white"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={searchState.date}
+            onChange={(e) => updateSearchState("date", e.target.value)}
             required
           />
         </div>

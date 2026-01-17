@@ -1,8 +1,10 @@
-import { SearchForm } from "@/components/search/search-form";
 import { Plane } from "lucide-react";
-import { Suspense } from "react";
 
-export default function Home() {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col justify-center relative overflow-hidden">
       <div className="container mx-auto px-4 py-20 relative z-10">
@@ -23,20 +25,14 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="animate-up" style={{ animationDelay: '0.1s' }}>
-          <Suspense fallback={<div className="h-20 w-full bg-white rounded-2xl animate-pulse"/>}>
-            <SearchForm />
-          </Suspense>
-        </div>
+        {children}
         
-        {/* Social Proof / Trust Indicators */}
         <div className="mt-16 flex justify-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
-           {/* Placeholders for visuals */}
            <div className="flex items-center gap-2 text-slate-400 font-medium">
               <Plane className="h-5 w-5" /> <span>Trusted by 10k+ Travelers</span>
            </div>
         </div>
       </div>
     </main>
-  );
+  )
 }

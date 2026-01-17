@@ -1,6 +1,6 @@
 
-import { TransformedFlight } from "@/app/types/amadeus.types";
-import { formatCurrency, formatDuration, formatTime, cn } from "@/lib/utils";
+import { TransformedFlight } from "@/types/amadeus.types";
+import { formatCurrency, formatDuration, formatTime, cn } from "@/utils";
 import { Plane, Clock, ArrowRight } from "lucide-react";
 
 interface FlightCardProps {

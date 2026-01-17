@@ -13,8 +13,6 @@ export function formatCurrency(amount: number, currency: string = "EUR") {
 }
 
 export function formatDuration(isoDuration: string) {
-  // Simple parser for PT2H30M format
-  // In production, might want to use specific library or regex
   const match = isoDuration.match(/PT(\d+H)?(\d+M)?/);
   if (!match) return isoDuration;
   
@@ -24,12 +22,11 @@ export function formatDuration(isoDuration: string) {
 }
 
 export function formatDate(dateStr: string) {
-  // 2024-12-25
   const date = new Date(dateStr);
   return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    weekday: "short",
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit", 
   }).format(date);
 }
 

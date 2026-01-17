@@ -2,9 +2,10 @@
 import { useState, useMemo } from "react";
 import { FlightCard } from "@/components/flights/flight-card";
 import { PriceGraph } from "@/components/viz/price-graph";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { TransformedFlight } from "@/app/types/amadeus.types";
+import { ArrowUpDown } from "lucide-react";
+import { TransformedFlight } from "@/types/amadeus.types";
+import { SearchSidebarProps, StopsFilter } from "./types";
+import { SearchSidebar } from "./search-sidebar";
 
 interface SearchResultsProps {
   initialFlights: TransformedFlight[];
@@ -12,17 +13,15 @@ interface SearchResultsProps {
 
 type SortOption = "price_asc" | "price_desc" | "duration_asc";
 
-export function SearchResults({ initialFlights }: SearchResultsProps) {
-  const [flights] = useState<TransformedFlight[]>(initialFlights);
-  
+export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
   // Filters State
   const [maxPrice, setMaxPrice] = useState<number>(5000);
-  const [stopsFilter, setStopsFilter] = useState<"all" | "0" | "1" | "2+">("all");
+  const [stopsFilter, setStopsFilter] = useState<StopsFilter>(StopsFilter.All);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [sort, setSort] = useState<SortOption>("price_asc");
 
   // Derive unique airlines for filter
-  const uniqueAirlines = useMemo(() => {
+  const uniqueAirlines = useMemo<SearchSidebarProps['uniqueAirlines']>(() => {
     const airlines = new Set(flights.map(f => f.airline));
     return Array.from(airlines);
   }, [flights]);
@@ -58,73 +57,16 @@ export function SearchResults({ initialFlights }: SearchResultsProps) {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {/* Sidebar Filters */}
-      <aside className="w-full lg:w-72 space-y-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm sticky top-24">
-           <div className="flex items-center gap-2 mb-6">
-             <SlidersHorizontal className="h-4 w-4 text-indigo-600" />
-             <h2 className="font-bold text-slate-900">Filters</h2>
-           </div>
-
-           {/* Stops Filter */}
-           <div className="mb-6">
-             <h3 className="text-xs font-bold text-slate-500 uppercase mb-3">Stops</h3>
-             <div className="flex gap-2">
-               {["all", "0", "1", "2+"].map((opt) => (
-                 <button
-                   key={opt}
-                   onClick={() => setStopsFilter(opt as any)}
-                   className={cn(
-                     "px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
-                     stopsFilter === opt 
-                       ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/20" 
-                       : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
-                   )}
-                 >
-                   {opt === "all" ? "Any" : opt}
-                 </button>
-               ))}
-             </div>
-           </div>
-
-           {/* Price Filter */}
-           <div className="mb-6">
-             <div className="flex justify-between mb-2">
-                <h3 className="text-xs font-bold text-slate-500 uppercase">Max Price</h3>
-                <span className="text-xs font-bold text-indigo-600">€{maxPrice}</span>
-             </div>
-             <input 
-               type="range" 
-               min={0} 
-               max={maxFlightPrice} 
-               value={maxPrice} 
-               onChange={(e) => setMaxPrice(Number(e.target.value))}
-               className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-             />
-           </div>
-
-           {/* Airlines Filter */}
-           <div>
-             <h3 className="text-xs font-bold text-slate-500 uppercase mb-3">Airlines</h3>
-             <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                {uniqueAirlines.map(airline => (
-                  <label key={airline} className="flex items-center gap-2 cursor-pointer group">
-                    <input 
-                      type="checkbox"
-                      className="rounded text-indigo-600 focus:ring-indigo-500 border-slate-300"
-                      checked={selectedAirlines.includes(airline)}
-                      onChange={(e) => {
-                        if (e.target.checked) setSelectedAirlines([...selectedAirlines, airline]);
-                        else setSelectedAirlines(selectedAirlines.filter(a => a !== airline));
-                      }}
-                    />
-                    <span className="text-sm text-slate-600 group-hover:text-slate-900">{airline}</span>
-                  </label>
-                ))}
-             </div>
-           </div>
-        </div>
-      </aside>
+      <SearchSidebar
+        setStopsFilter={setStopsFilter}
+        setMaxPrice={setMaxPrice}
+        setSelectedAirlines={setSelectedAirlines}
+        selectedAirlines={selectedAirlines}
+        stopsFilter={stopsFilter}
+        maxPrice={maxPrice}
+        maxFlightPrice={maxFlightPrice}
+        uniqueAirlines={uniqueAirlines}
+      />
 
       {/* Main Content */}
       <div className="flex-1 space-y-6">

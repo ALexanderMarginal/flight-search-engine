@@ -1,8 +1,7 @@
 "use client";
-
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import { formatCurrency } from "@/lib/utils";
-import { TransformedFlight } from "@/app/types/amadeus.types";
+import { formatCurrency } from "@/utils";
+import { TransformedFlight } from "@/types/amadeus.types";
 
 interface PriceGraphProps {
   flights: TransformedFlight[];
