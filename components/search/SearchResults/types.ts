@@ -1,8 +1,8 @@
 export enum StopsFilter {
-    All = "all",
-    Zero = "0",
-    One = "1",
-    TwoPlus = "2+"
+    All = 'all',
+    Zero = '0',
+    One = '1',
+    TwoPlus = '2+'
 }
 
 export interface SearchSidebarProps {

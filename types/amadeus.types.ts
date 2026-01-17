@@ -1,4 +1,3 @@
-import { Airport } from './amadeus.types';
 export enum AmadeusTokenState {
   APPROVED = 'approved',
 }
@@ -28,8 +27,8 @@ export interface Segment {
     iataCode: string;
     at: string;
   };
-  carrierCode: string; // e.g. "AA"
-  number: string; // e.g. "100"
+  carrierCode: string; // e.g. 'AA'
+  number: string; // e.g. '100'
   duration: string; // PT2H30M
   aircraft: {
     code: string;
@@ -71,8 +70,8 @@ export interface SearchParams {
   origin: string;
   destination: string;
   date: string;
-  returnDate?: string; // Optional
   adults: string;
+  returnDate?: string;
   max?: string;
 }
 
@@ -114,4 +113,19 @@ export interface AirportResponse {
     };
   };
   data: Airport[];
+}
+
+export interface FlightDestination {
+  type: string;
+  origin: string;
+  destination: string;
+  departureDate: string;
+  returnDate?: string;
+  price: {
+    total: string;
+  };
+  links: {
+    flightDates: string;
+    flightOffers: string;
+  };
 }

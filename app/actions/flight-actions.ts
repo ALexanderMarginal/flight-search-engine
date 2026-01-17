@@ -1,7 +1,7 @@
 'use server';
 
-import { amadeusApi } from "@/app/api/amadeus";
-import { Airport } from "@/types/amadeus.types";
+import { amadeusApi } from '@/app/api/amadeus';
+import { Airport } from '@/types/amadeus.types';
 
 export const searchAirportsAction = async (query: string): Promise<Airport[]> => {
   if (!query || query.length < 3) {
@@ -15,7 +15,7 @@ export const searchAirportsAction = async (query: string): Promise<Airport[]> =>
     
     return response;
   } catch (error) {
-    console.error("Error searching airports:", error);
+    console.error('Error searching airports:', error);
     return [];
   }
 } 

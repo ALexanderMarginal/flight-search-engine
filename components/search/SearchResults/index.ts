@@ -1,3 +1,3 @@
-import { SearchResults } from "./search-results";
+import { SearchResults } from './search-results';
 
 export default SearchResults;

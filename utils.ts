@@ -1,18 +1,19 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { eachDayOfInterval, endOfMonth, getDay, startOfMonth } from 'date-fns';
+import { twMerge } from 'tailwind-merge';
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency: string = "EUR") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
+export const formatCurrency = (amount: number, currency: string = 'EUR') => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency,
   }).format(amount);
 }
 
-export function formatDuration(isoDuration: string) {
+export const formatDuration = (isoDuration: string) => {
   const match = isoDuration.match(/PT(\d+H)?(\d+M)?/);
   if (!match) return isoDuration;
   
@@ -21,20 +22,30 @@ export function formatDuration(isoDuration: string) {
   return `${hours}${minutes}`.trim();
 }
 
-export function formatDate(dateStr: string) {
+export const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
-  return new Intl.DateTimeFormat("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "2-digit", 
+  return new Intl.DateTimeFormat('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: '2-digit', 
   }).format(date);
 }
 
-export function formatTime(dateStr: string) {
+export const formatTime = (dateStr: string) => {
   const date = new Date(dateStr);
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
     hour12: true,
   }).format(date);
 }
+
+export const getDaysForMonth = (date: Date) => {
+  const start = startOfMonth(date);
+  const end = endOfMonth(date);
+  const days = eachDayOfInterval({ start, end });
+    
+  const startDay = getDay(start);
+  const padding = Array(startDay).fill(null);
+  return [...padding, ...days];
+};
