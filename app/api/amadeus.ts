@@ -1,33 +1,37 @@
 
-import { SearchParams } from "@/types/search.types";
-import { AmadeusTokenResponse, TransformedFlight, FlightOffer } from "../../types/amadeus.types";
+import { 
+  AmadeusTokenResponse, 
+  TransformedFlight, 
+  FlightOffer, 
+  SearchParams,
+  Airport
+} from "@/types/amadeus.types";
 
-const AMADEUS_BASE_URL = "https://test.api.amadeus.com/v2";
+class AmadeusApi {
+  private v1Url: string = 'https://test.api.amadeus.com/v1';
+  private v2Url: string = 'https://test.api.amadeus.com/v2';
+  private clientId: string | undefined = process.env.AMADEUS_CLIENT_ID;
+  private clientSecret: string | undefined = process.env.AMADEUS_CLIENT_SECRET;
+  private cachedToken: string | null = null;
+  private tokenExpiry: number = 0;
 
-let cachedToken: string | null = null;
-let tokenExpiry: number = 0;
+  private async getAccessToken(forceRefresh: boolean = false): Promise<string | null> {
+    if (!this.clientId || !this.clientSecret) {
+      console.warn("Using Mock Data: Missing Amadeus API Credentials");
+      return null;
+    }
 
-const getAccessToken = async (forceRefresh: boolean = false): Promise<string | null> => {
-  const clientId = process.env.AMADEUS_CLIENT_ID;
-  const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
-  
+    if (!forceRefresh && this.cachedToken && Date.now() < this.tokenExpiry) {
+      return this.cachedToken;
+    }
 
-  if (!clientId || !clientSecret) {
-    console.warn("Using Mock Data: Missing Amadeus API Credentials");
-    return null;
-  }
+    const params = new URLSearchParams();
+    params.append("grant_type", "client_credentials");
+    params.append("client_id", this.clientId);
+    params.append("client_secret", this.clientSecret);
 
-  if (!forceRefresh && cachedToken && Date.now() < tokenExpiry) {
-    return cachedToken;
-  }
-
-  const params = new URLSearchParams();
-  params.append("grant_type", "client_credentials");
-  params.append("client_id", clientId);
-  params.append("client_secret", clientSecret);
-
-  try {
-    const res = await fetch("https://test.api.amadeus.com/v1/security/oauth2/token", {
+    try {
+    const res = await fetch(`${this.v1Url}/security/oauth2/token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -44,24 +48,29 @@ const getAccessToken = async (forceRefresh: boolean = false): Promise<string | n
     }
 
     const data: AmadeusTokenResponse = await res.json();
-    cachedToken = data.access_token;
-    tokenExpiry = Date.now() + (data.expires_in * 1000) - 30000; 
+    this.cachedToken = data.access_token;
+    this.tokenExpiry = Date.now() + (data.expires_in * 1000) - 30000; 
 
-    return cachedToken;
-  } catch (error) {
-    console.error("Auth Error:", error);
-    return null;
+    return this.cachedToken;
+    } catch (error) {
+      console.error("Auth Error:", error);
+      return null;
+    }
   }
-}
 
-export const fetchFlights = async (params: SearchParams): Promise<TransformedFlight[]> => {
-  let token = await getAccessToken();
-  
-  const url = new URL(`${AMADEUS_BASE_URL}/shopping/flight-offers`);
-  url.searchParams.append("originLocationCode", params.origin);
-  url.searchParams.append("destinationLocationCode", params.destination);
-  url.searchParams.append("departureDate", params.date);
-  url.searchParams.append("adults", params.adults);
+  private get headers(): Record<string, string> {
+    return {
+      "Authorization": `Bearer ${this.cachedToken}`,
+      "Content-Type": "application/json",
+    };
+  }
+
+  async fetchFlights(params: SearchParams): Promise<TransformedFlight[]> {
+    const url = new URL(`${this.v2Url}/shopping/flight-offers`);
+    url.searchParams.append("originLocationCode", params.origin);
+    url.searchParams.append("destinationLocationCode", params.destination);
+    url.searchParams.append("departureDate", params.date);
+    url.searchParams.append("adults", params.adults);
   
   if (params.returnDate) {
     url.searchParams.append("returnDate", params.returnDate);
@@ -70,25 +79,17 @@ export const fetchFlights = async (params: SearchParams): Promise<TransformedFli
   url.searchParams.append("max", params.max || "20");
   url.searchParams.append("currencyCode", "EUR");
 
-  console.log(`Fetching flights: ${url.toString()}`);
-
   let res = await fetch(url.toString(), {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: this.headers,
     next: { revalidate: 300 } 
   });
 
-  // Handle Token Expiry
   if (res.status === 401) {
-    console.log("Access token expired. Refreshing token...");
-    token = await getAccessToken(true);
+    await this.getAccessToken(true);
     
-    if (token) {
+    if (this.cachedToken) {
         res = await fetch(url.toString(), {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: this.headers,
             next: { revalidate: 300 } 
         });
     }
@@ -106,13 +107,11 @@ export const fetchFlights = async (params: SearchParams): Promise<TransformedFli
 
   if (!offers || offers.length === 0) return [];
 
-  // Transform internal raw data to convenient UI model
   return offers.map(offer => {
     const firstItinerary = offer.itineraries[0];
     const firstSegment = firstItinerary.segments[0];
     const lastSegment = firstItinerary.segments[firstItinerary.segments.length - 1];
     
-    // Resolve airline name
     const carrierCode = firstSegment.carrierCode;
     const airlineName = dictionaries?.carriers?.[carrierCode] || carrierCode;
     
@@ -131,4 +130,43 @@ export const fetchFlights = async (params: SearchParams): Promise<TransformedFli
       segments: firstItinerary.segments
     };
   });
+  }
+
+  async searchAirport(query: string): Promise<Airport[]> {
+    const url = new URL(`${this.v1Url}/reference-data/locations`);
+    url.searchParams.append("subType", "CITY");
+    url.searchParams.append("keyword", query);
+
+    let res = await fetch(url.toString(), {
+      headers: this.headers,
+      next: { revalidate: 300 } 
+    });
+
+    if (res.status === 401) {
+      await this.getAccessToken(true);
+      
+      if (this.cachedToken) {
+          res = await fetch(url.toString(), {
+              headers: this.headers,
+              next: { revalidate: 300 } 
+          });
+      }
+    }
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Amadeus API Error:", err);
+      return [];
+    }
+
+    const json = await res.json();
+    const airports: Airport[] = json.data;
+    return airports;
+  } 
+}
+
+const amadeusApi = new AmadeusApi();
+
+export {
+  amadeusApi,
 }

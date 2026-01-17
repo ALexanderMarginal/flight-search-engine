@@ -1,3 +1,4 @@
+import { Airport } from './amadeus.types';
 export enum AmadeusTokenState {
   APPROVED = 'approved',
 }
@@ -64,4 +65,53 @@ export interface FlightOffer {
   }[];
   numberOfBookableSeats: number;
   validatingAirlineCodes: string[];
+}
+
+export interface SearchParams {
+  origin: string;
+  destination: string;
+  date: string;
+  returnDate?: string; // Optional
+  adults: string;
+  max?: string;
+}
+
+export interface Airport {
+  type: string,
+  subType: string,
+  name: string,
+  detailedName: string,
+  id: string,
+  self: {
+    href: string,
+    methods: string[]
+  },
+  timeZoneOffset: string,
+  iataCode: string,
+  geoCode: {
+    latitude: number,
+    longitude: number
+  },
+  address: {
+    cityName: string,
+    cityCode: string,
+    countryName: string,
+    countryCode: string,
+    regionCode: string
+      },
+  analytics: {
+    travelers: {
+      score: number
+    }
+  }
+}
+
+export interface AirportResponse {
+  meta: {
+    count: number;
+    links: {
+      self: string;
+    };
+  };
+  data: Airport[];
 }

@@ -1,8 +1,8 @@
-import { fetchFlights } from "@/app/api/amadeus";
 import { SearchResults } from "@/components/search/SearchResults/search-results";
 import { Fragment } from "react";
-import { SearchParams } from "@/types/search.types";
 import { SearchForm } from "@/components/search/SearchForm";
+import { SearchParams } from "@/types/amadeus.types";
+import { amadeusApi } from "@/app/api/amadeus";
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +19,7 @@ export default async function SearchPage(props: PageProps) {
     max: "50"
   };
 
-  const flights = await fetchFlights(paramsSafe);
-  
+  const flights = await amadeusApi.fetchFlights(paramsSafe);
 
   return (
     <Fragment>
