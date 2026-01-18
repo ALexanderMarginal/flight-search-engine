@@ -1,5 +1,5 @@
 import { Airport } from '@/types/amadeus.types';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 
 interface AirportComboboxListProps {

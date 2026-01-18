@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TransformedFlight } from '@/types/amadeus.types';
-import { formatCurrency, formatDuration, formatTime, calculateLayover, cn } from '@/utils';
+import { formatCurrency, formatDuration, formatTime, calculateLayover, cn } from '@/lib/utils';
 import { 
   Plane, ChevronDown, ChevronUp, Clock, PlaneTakeoff, PlaneLanding, Info,
   Users, Calendar, Zap, CreditCard, Luggage, AlertTriangle, Wifi, Utensils, Tv, Headphones, Battery

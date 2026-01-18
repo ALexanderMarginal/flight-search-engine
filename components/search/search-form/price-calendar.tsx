@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { PriceCalendarProps, PriceData } from './types';
 import { PriceCalendarMonth } from './price-calendar-month';
 import { format } from 'date-fns';
-import { parseLocalDate } from '@/utils';
+import { parseLocalDate } from '@/lib/utils';
 
 export const PriceCalendar = ({ value, change, close, origin, destination, placeholder, minDate, maxDate }: PriceCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(value ? parseLocalDate(value) : new Date());

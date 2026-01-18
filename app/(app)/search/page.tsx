@@ -2,7 +2,7 @@ import { SearchResults } from '@/components/search/search-results';
 import { Fragment } from 'react';
 import { SearchForm } from '@/components/search/search-form';
 import { SearchParams } from '@/types/amadeus.types';
-import { amadeusApi } from '@/app/api/amadeus';
+import { amadeusApi } from '@/lib/amadeus';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +36,7 @@ export default async function SearchPage(props: PageProps) {
       </div>
     
       <SearchResults 
+        key={JSON.stringify(paramsSafe)}
         initialFlights={flights} 
         origin={paramsSafe.origin}
         destination={paramsSafe.destination}

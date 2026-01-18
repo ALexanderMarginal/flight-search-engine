@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import { searchAirportsAction } from '@/app/actions/flight-actions';
 import { Airport } from '@/types/amadeus.types';
 import { AirportComboboxList } from './airport-combobox-list';

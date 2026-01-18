@@ -1,6 +1,6 @@
 'use server';
 
-import { amadeusApi } from '@/app/api/amadeus';
+import { amadeusApi } from '@/lib/amadeus';
 import { Airport } from '@/types/amadeus.types';
 
 export const searchAirportsAction = async (query: string): Promise<Airport[]> => {

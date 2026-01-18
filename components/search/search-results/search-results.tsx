@@ -17,7 +17,19 @@ interface SearchResultsProps {
 type SortOption = 'price_asc' | 'price_desc' | 'duration_asc';
 
 export function SearchResults({ initialFlights: flights, origin, destination, selectedDate }: SearchResultsProps) {
-  const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const { minFlightPrice, maxFlightPrice } = useMemo(() => {
+    if (flights.length === 0) return { minFlightPrice: 0, maxFlightPrice: 5000 };
+    const prices = flights.map(f => f.amount);
+    return {
+      minFlightPrice: Math.floor(Math.min(...prices)),
+      maxFlightPrice: Math.ceil(Math.max(...prices))
+    };
+  }, [flights]);
+
+  const [minPrice, setMinPrice] = useState<number>(minFlightPrice);
+  const [maxPrice, setMaxPrice] = useState<number>(maxFlightPrice);
+
+
   const [stopsFilter, setStopsFilter] = useState<StopsFilter>(StopsFilter.All);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [sort, setSort] = useState<SortOption>('price_asc');
@@ -29,7 +41,7 @@ export function SearchResults({ initialFlights: flights, origin, destination, se
 
   const filteredFlights = useMemo(() => {
     const res = flights.filter(f => {
-       if (f.amount > maxPrice) return false;
+       if (f.amount < minPrice || f.amount > maxPrice) return false;
        
        const maxStopsInAnyItinerary = Math.max(...f.itineraries.map(i => i.stops));
 
@@ -55,19 +67,21 @@ export function SearchResults({ initialFlights: flights, origin, destination, se
     }
 
     return res;
-  }, [flights, maxPrice, stopsFilter, selectedAirlines, sort]);
+  }, [flights, minPrice, maxPrice, stopsFilter, selectedAirlines, sort]);
 
-  const maxFlightPrice = useMemo(() => Math.max(...flights.map(f => f.amount), 1000), [flights]);
 
   return (
     <div className='flex flex-col lg:flex-row gap-6'>
       <SearchSidebar
         setStopsFilter={setStopsFilter}
+        setMinPrice={setMinPrice}
         setMaxPrice={setMaxPrice}
         setSelectedAirlines={setSelectedAirlines}
         selectedAirlines={selectedAirlines}
         stopsFilter={stopsFilter}
+        minPrice={minPrice}
         maxPrice={maxPrice}
+        minFlightPrice={minFlightPrice}
         maxFlightPrice={maxFlightPrice}
         uniqueAirlines={uniqueAirlines}
       />

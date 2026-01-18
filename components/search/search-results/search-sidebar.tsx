@@ -1,6 +1,6 @@
 import { SlidersHorizontal } from 'lucide-react';
 import { SearchSidebarProps, StopsFilter } from './types';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 
 export const SearchSidebar = (props: SearchSidebarProps) => {
   return (
@@ -35,17 +35,21 @@ export const SearchSidebar = (props: SearchSidebarProps) => {
            
            <div className='mb-6'>
              <div className='flex justify-between mb-2'>
-                <h3 className='text-xs font-bold text-slate-500 uppercase'>Max Price</h3>
-                <span className='text-xs font-bold text-indigo-600'>€{props.maxPrice}</span>
+                <h3 className='text-xs font-bold text-slate-500 uppercase'>Price Range</h3>
+                <span className='text-xs font-bold text-indigo-600'>Up to €{props.maxPrice}</span>
              </div>
              <input 
                type='range' 
-               min={0} 
+               min={props.minFlightPrice} 
                max={props.maxFlightPrice} 
                value={props.maxPrice} 
                onChange={(e) => props.setMaxPrice(Number(e.target.value))}
                className='w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600'
              />
+             <div className='flex justify-between mt-1'>
+               <span className='text-[10px] text-slate-400 font-medium'>€{props.minFlightPrice}</span>
+               <span className='text-[10px] text-slate-400 font-medium'>€{props.maxFlightPrice}</span>
+             </div>
            </div>
 
            

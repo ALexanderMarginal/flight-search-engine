@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ReferenceLine } from 'recharts';
-import { formatCurrency } from '@/utils';
+import { formatCurrency } from '@/lib/utils';
 import { Loader2, TrendingDown, TrendingUp, Calendar } from 'lucide-react';
 
 interface PriceDataPoint {

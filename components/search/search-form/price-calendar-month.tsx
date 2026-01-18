@@ -1,7 +1,7 @@
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import { PriceCalendarMonthProps } from './types';
 import { format, isSameMonth, isBefore, isAfter, startOfDay } from 'date-fns';
-import { getDaysForMonth } from '@/utils';
+import { getDaysForMonth } from '@/lib/utils';
 
 export const PriceCalendarMonth = ({ date, prices, value, change, close, minDate, maxDate }: PriceCalendarMonthProps) => {
   const days = getDaysForMonth(date);

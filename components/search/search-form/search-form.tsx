@@ -6,7 +6,7 @@ import { Plane, Calendar, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn, parseLocalDate } from '@/utils';
+import { cn, parseLocalDate } from '@/lib/utils';
 
 import { AirportCombobox } from './airport-combobox';
 import { PriceCalendar } from './price-calendar';
