@@ -63,7 +63,6 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
             };
           });
           
-          // Sort by date
           formattedData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
           
           setPriceData(formattedData);
@@ -84,19 +83,15 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
   const handleBarClick = (data: PriceDataPoint) => {
     if (data.date === selectedDate) return;
     
-    // Navigate to the new date
     const params = new URLSearchParams(searchParams.toString());
     params.set('date', data.date);
     router.push(`/search?${params.toString()}`);
   };
-
-  // Calculate stats
   const lowestPrice = priceData.length > 0 ? Math.min(...priceData.map(d => d.price)) : 0;
   const highestPrice = priceData.length > 0 ? Math.max(...priceData.map(d => d.price)) : 0;
   const selectedPrice = priceData.find(d => d.isSelected)?.price || 0;
   const avgPrice = priceData.length > 0 ? priceData.reduce((sum, d) => sum + d.price, 0) / priceData.length : 0;
 
-  // Loading state
   if (isLoading) {
     return (
       <div className='h-64 w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center'>
@@ -108,7 +103,6 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
     );
   }
 
-  // Error state
   if (error || priceData.length === 0) {
     return (
       <div className='h-48 w-full bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-dashed border-slate-200'>
@@ -120,7 +114,6 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
     );
   }
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload }: {active: boolean, payload: {payload: PriceDataPoint}[]}) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -137,23 +130,21 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
     return null;
   };
 
-  // Get bar color based on price
   const getBarColor = (entry: PriceDataPoint) => {
-    if (entry.isSelected) return '#6366f1'; // indigo for selected
-    if (entry.isLowest) return '#10b981'; // green for lowest
+    if (entry.isSelected) return '#6366f1';
+    if (entry.isLowest) return '#10b981';
     
-    // Gradient from green to red based on price
     const priceRange = highestPrice - lowestPrice;
     const pricePercent = priceRange > 0 ? (entry.price - lowestPrice) / priceRange : 0;
     
-    if (pricePercent < 0.33) return '#22c55e'; // green
-    if (pricePercent < 0.66) return '#f59e0b'; // amber
-    return '#ef4444'; // red
+    if (pricePercent < 0.33) return '#22c55e';
+    if (pricePercent < 0.66) return '#f59e0b';
+    return '#ef4444';
   };
 
   return (
     <div className='w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm'>
-      {/* Header */}
+      
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4'>
         <div className='flex items-center gap-2'>
           <Calendar className='h-4 w-4 text-indigo-500' />
@@ -161,7 +152,7 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
           <span className='text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full'>{priceData.length} dates</span>
         </div>
         
-        {/* Stats */}
+        
         <div className='flex flex-wrap gap-3'>
           <div className='flex items-center gap-1.5'>
             <TrendingDown className='h-4 w-4 text-emerald-500' />
@@ -183,7 +174,7 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
         </div>
       </div>
       
-      {/* Chart */}
+      
       <div className='h-48'>
         <ResponsiveContainer width='100%' height='100%'>
           <BarChart data={priceData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
@@ -206,7 +197,7 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
             />
             <Tooltip content={<CustomTooltip active={false} payload={[]} />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
             
-            {/* Reference line for average price */}
+            
             <ReferenceLine 
               y={avgPrice} 
               stroke='#cbd5e1' 
@@ -234,7 +225,7 @@ export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetPr
         </ResponsiveContainer>
       </div>
       
-      {/* Legend */}
+      
       <div className='mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-4 justify-center text-xs text-slate-500'>
         <div className='flex items-center gap-1.5'>
           <div className='w-3 h-3 rounded bg-indigo-500' />

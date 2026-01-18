@@ -11,7 +11,7 @@ export const SearchSidebar = (props: SearchSidebarProps) => {
              <h2 className='font-bold text-slate-900'>Filters</h2>
            </div>
 
-           {/* Stops Filter */}
+           
            <div className='mb-6'>
              <h3 className='text-xs font-bold text-slate-500 uppercase mb-3'>Stops</h3>
              <div className='flex gap-2'>
@@ -32,7 +32,7 @@ export const SearchSidebar = (props: SearchSidebarProps) => {
              </div>
            </div>
 
-           {/* Price Filter */}
+           
            <div className='mb-6'>
              <div className='flex justify-between mb-2'>
                 <h3 className='text-xs font-bold text-slate-500 uppercase'>Max Price</h3>
@@ -48,7 +48,7 @@ export const SearchSidebar = (props: SearchSidebarProps) => {
              />
            </div>
 
-           {/* Airlines Filter */}
+           
            <div>
              <h3 className='text-xs font-bold text-slate-500 uppercase mb-3'>Airlines</h3>
              <div className='space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar'>

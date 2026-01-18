@@ -8,7 +8,6 @@ import {
   Users, Calendar, Zap, CreditCard, Luggage, AlertTriangle, Wifi, Utensils, Tv, Headphones, Battery
 } from 'lucide-react';
 
-// Helper function to get amenity icon based on type
 function getAmenityIcon(amenityType: string) {
   switch (amenityType?.toUpperCase()) {
     case 'WIFI':
@@ -135,10 +134,8 @@ export function FlightCard({ flight }: FlightCardProps) {
 
       </div>
 
-      {/* Expanded Details Section */}
       {isExpanded && (
         <div className='mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300'>
-          {/* Header with offer-level info */}
           <div className='flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6'>
             <div className='flex items-center gap-2'>
               <Info className='h-4 w-4 text-indigo-500' />
@@ -166,7 +163,6 @@ export function FlightCard({ flight }: FlightCardProps) {
             </div>
           </div>
 
-          {/* Price Breakdown */}
           {flight.priceBreakdown && (
             <div className='mb-6 p-4 bg-gradient-to-r from-slate-50 to-indigo-50 rounded-xl'>
               <h5 className='text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2'>
@@ -232,7 +228,6 @@ export function FlightCard({ flight }: FlightCardProps) {
                     
                     return (
                       <div key={segment.id} className='relative'>
-                        {/* Layover indicator between segments */}
                         {segIndex > 0 && (
                           <div className='mb-4 flex items-center gap-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2'>
                             <Clock className='h-3 w-3' />
@@ -247,7 +242,6 @@ export function FlightCard({ flight }: FlightCardProps) {
                         )}
                         
                         <div className='bg-slate-50 rounded-xl p-4'>
-                          {/* Flight header */}
                           <div className='flex flex-wrap items-center gap-2 mb-4 pb-3 border-b border-slate-200'>
                             <div className='h-8 w-8 bg-white rounded-full flex items-center justify-center text-xs font-bold text-slate-500 border border-slate-200'>
                               {segment.carrierCode}
@@ -290,9 +284,9 @@ export function FlightCard({ flight }: FlightCardProps) {
                             </div>
                           </div>
 
-                          {/* Flight route */}
+                          
                           <div className='flex flex-col md:flex-row md:items-center gap-4'>
-                            {/* Departure */}
+                            
                             <div className='flex items-start gap-2 flex-1'>
                               <PlaneTakeoff className='h-4 w-4 text-indigo-500 mt-0.5' />
                               <div>
@@ -316,7 +310,7 @@ export function FlightCard({ flight }: FlightCardProps) {
                               </div>
                             </div>
 
-                            {/* Duration */}
+                            
                             <div className='flex items-center gap-2 text-slate-400'>
                               <div className='w-12 h-[1px] bg-slate-300' />
                               <div className='flex flex-col items-center'>
@@ -326,7 +320,7 @@ export function FlightCard({ flight }: FlightCardProps) {
                               <div className='w-12 h-[1px] bg-slate-300' />
                             </div>
 
-                            {/* Arrival */}
+                            
                             <div className='flex items-start gap-2 flex-1'>
                               <PlaneLanding className='h-4 w-4 text-indigo-500 mt-0.5' />
                               <div>
@@ -351,11 +345,11 @@ export function FlightCard({ flight }: FlightCardProps) {
                             </div>
                           </div>
 
-                          {/* Baggage & Amenities */}
+                          
                           {fareDetail && (
                             <div className='mt-4 pt-3 border-t border-slate-200'>
                               <div className='flex flex-wrap gap-3'>
-                                {/* Baggage */}
+                                
                                 {fareDetail.includedCheckedBags && (
                                   <div className='flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg'>
                                     <Luggage className='h-4 w-4 text-slate-500' />
@@ -370,7 +364,7 @@ export function FlightCard({ flight }: FlightCardProps) {
                                   </div>
                                 )}
                                 
-                                {/* Amenities */}
+                                
                                 {fareDetail.amenities && fareDetail.amenities.length > 0 && (
                                   fareDetail.amenities.map((amenity, amenIdx) => (
                                     <div 
@@ -394,7 +388,7 @@ export function FlightCard({ flight }: FlightCardProps) {
                             </div>
                           )}
                           
-                          {/* EU Blacklist Warning */}
+                          
                           {segment.blacklistedInEU && (
                             <div className='mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2'>
                               <AlertTriangle className='h-3 w-3' />
@@ -410,7 +404,7 @@ export function FlightCard({ flight }: FlightCardProps) {
             ))}
           </div>
 
-          {/* Action Buttons */}
+          
           <div className='mt-6 pt-4 border-t border-slate-100 flex justify-end gap-3'>
             <button 
               onClick={() => setIsExpanded(false)}

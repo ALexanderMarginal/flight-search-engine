@@ -118,7 +118,6 @@ class AmadeusApi {
       const carrierCode = firstSegment.carrierCode;
       const airlineName = dictionaries?.carriers?.[carrierCode] || carrierCode;
 
-      // Get fare details for all segments in this itinerary
       const fareDetailsForItinerary = itinerary.segments.map(seg => {
         const fareDetail = travelerPricing?.fareDetailsBySegment.find(f => f.segmentId === seg.id);
         return fareDetail ? {
@@ -134,15 +133,12 @@ class AmadeusApi {
 
       const firstFareDetail = fareDetailsForItinerary[0];
       
-      // Enrich segments with dictionaries data
       const enrichedSegments = itinerary.segments.map(seg => ({
         ...seg,
-        // Add aircraft name from dictionaries if available
         aircraft: {
           ...seg.aircraft,
           name: dictionaries?.aircraft?.[seg.aircraft.code] || seg.aircraft.code,
         },
-        // Add operating carrier name if different from marketing carrier
         operating: seg.operating ? {
           ...seg.operating,
           carrierName: dictionaries?.carriers?.[seg.operating.carrierCode] || seg.operating.carrierCode,
@@ -170,7 +166,6 @@ class AmadeusApi {
       amount: parseFloat(offer.price.grandTotal),
       currency: offer.price.currency,
       itineraries,
-      // Additional offer-level information
       numberOfBookableSeats: offer.numberOfBookableSeats,
       validatingAirlineCodes: offer.validatingAirlineCodes,
       lastTicketingDate: offer.lastTicketingDate,

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { FlightCard } from '@/components/flights/flight-card';
-import { PriceWidget } from '@/components/price-widget';
+import { PriceGraph } from '@/components/viz/price-graph';
 import { ArrowUpDown } from 'lucide-react';
 import { TransformedFlight } from '@/types/amadeus.types';
 import { SearchSidebarProps, StopsFilter } from './types';
@@ -77,7 +77,7 @@ export function SearchResults({ initialFlights: flights, origin, destination, se
         
         
         <div className='grid gap-6'>
-           <PriceWidget origin={origin} destination={destination} selectedDate={selectedDate} />
+           <PriceGraph origin={origin} destination={destination} selectedDate={selectedDate} />
            
            <div className='flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200'>
               <p className='text-sm font-medium text-slate-500'>
