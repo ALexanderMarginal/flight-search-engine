@@ -10,8 +10,6 @@ export const searchAirportsAction = async (query: string): Promise<Airport[]> =>
 
   try {
     const response = await amadeusApi.searchAirport(query);
-    console.log('query', query);
-    console.log('response', response);
     
     return response;
   } catch (error) {

@@ -1,6 +1,18 @@
 import { type ClassValue, clsx } from 'clsx';
-import { eachDayOfInterval, endOfMonth, getDay, startOfMonth } from 'date-fns';
+import { eachDayOfInterval, endOfMonth, getDay, startOfMonth, differenceInMinutes } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
+
+export const calculateLayover = (arrivalIso: string, departureIso: string) => {
+  const arrival = new Date(arrivalIso);
+  const departure = new Date(departureIso);
+  const diffMinutes = differenceInMinutes(departure, arrival);
+  
+  const hours = Math.floor(diffMinutes / 60);
+  const mins = diffMinutes % 60;
+  
+  if (hours > 0) return `${hours}h ${mins}m`;
+  return `${mins}m`;
+}
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -48,4 +60,10 @@ export const getDaysForMonth = (date: Date) => {
   const startDay = getDay(start);
   const padding = Array(startDay).fill(null);
   return [...padding, ...days];
+};
+
+export const parseLocalDate = (dateStr: string) => {
+  if (!dateStr) return new Date();
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
 };

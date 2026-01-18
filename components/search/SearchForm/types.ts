@@ -19,6 +19,8 @@ export interface PriceCalendarProps {
   origin: string;
   destination: string;
   placeholder: string;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 export interface PriceCalendarMonthProps {
@@ -27,4 +29,6 @@ export interface PriceCalendarMonthProps {
   value: string;
   change: (date: string) => void;
   close: () => void;
+  minDate?: Date;
+  maxDate?: Date;
 }

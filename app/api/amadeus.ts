@@ -104,7 +104,6 @@ class AmadeusApi {
   }
 
   const json = await res.json();
-  console.log('flights', json);
   
   const offers: FlightOffer[] = json.data;
   const dictionaries = json.dictionaries;
@@ -112,26 +111,80 @@ class AmadeusApi {
   if (!offers || offers.length === 0) return [];
 
   return offers.map(offer => {
-    const firstItinerary = offer.itineraries[0];
-    const firstSegment = firstItinerary.segments[0];
-    const lastSegment = firstItinerary.segments[firstItinerary.segments.length - 1];
+    const travelerPricing = offer.travelerPricings?.[0];
     
-    const carrierCode = firstSegment.carrierCode;
-    const airlineName = dictionaries?.carriers?.[carrierCode] || carrierCode;
-    
+    const itineraries = offer.itineraries.map((itinerary) => {
+      const firstSegment = itinerary.segments[0];
+      const lastSegment = itinerary.segments[itinerary.segments.length - 1];
+      const carrierCode = firstSegment.carrierCode;
+      const airlineName = dictionaries?.carriers?.[carrierCode] || carrierCode;
+
+      // Get fare details for all segments in this itinerary
+      const fareDetailsForItinerary = itinerary.segments.map(seg => {
+        const fareDetail = travelerPricing?.fareDetailsBySegment.find(f => f.segmentId === seg.id);
+        return fareDetail ? {
+          segmentId: seg.id,
+          cabin: fareDetail.cabin,
+          fareBasis: fareDetail.fareBasis,
+          brandedFare: fareDetail.brandedFare,
+          class: fareDetail.class,
+          includedCheckedBags: fareDetail.includedCheckedBags,
+          amenities: fareDetail.amenities,
+        } : null;
+      }).filter((fd): fd is NonNullable<typeof fd> => fd !== null);
+
+      const firstFareDetail = fareDetailsForItinerary[0];
+      
+      // Enrich segments with dictionaries data
+      const enrichedSegments = itinerary.segments.map(seg => ({
+        ...seg,
+        // Add aircraft name from dictionaries if available
+        aircraft: {
+          ...seg.aircraft,
+          name: dictionaries?.aircraft?.[seg.aircraft.code] || seg.aircraft.code,
+        },
+        // Add operating carrier name if different from marketing carrier
+        operating: seg.operating ? {
+          ...seg.operating,
+          carrierName: dictionaries?.carriers?.[seg.operating.carrierCode] || seg.operating.carrierCode,
+        } : undefined,
+      }));
+      
+      return {
+        duration: itinerary.duration,
+        segments: enrichedSegments,
+        stops: itinerary.segments.length - 1,
+        airline: airlineName,
+        airlineCode: carrierCode,
+        departureTime: firstSegment.departure.at,
+        arrivalTime: lastSegment.arrival.at,
+        originCode: firstSegment.departure.iataCode,
+        destinationCode: lastSegment.arrival.iataCode,
+        cabin: firstFareDetail?.cabin,
+        class: firstFareDetail?.class,
+        fareDetails: fareDetailsForItinerary,
+      };
+    });
+
     return {
       id: offer.id,
       amount: parseFloat(offer.price.grandTotal),
       currency: offer.price.currency,
-      airline: airlineName,
-      airlineCode: carrierCode,
-      departureTime: firstSegment.departure.at,
-      arrivalTime: lastSegment.arrival.at,
-      originCode: firstSegment.departure.iataCode,
-      destinationCode: lastSegment.arrival.iataCode,
-      duration: firstItinerary.duration,
-      stops: firstItinerary.segments.length - 1,
-      segments: firstItinerary.segments
+      itineraries,
+      // Additional offer-level information
+      numberOfBookableSeats: offer.numberOfBookableSeats,
+      validatingAirlineCodes: offer.validatingAirlineCodes,
+      lastTicketingDate: offer.lastTicketingDate,
+      instantTicketingRequired: offer.instantTicketingRequired,
+      nonHomogeneous: offer.nonHomogeneous,
+      oneWay: offer.oneWay,
+      priceBreakdown: {
+        base: offer.price.base,
+        total: offer.price.total,
+        grandTotal: offer.price.grandTotal,
+        currency: offer.price.currency,
+        fees: offer.price.fees,
+      },
     };
   });
   }

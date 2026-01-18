@@ -22,7 +22,7 @@ export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
 
   // Derive unique airlines for filter
   const uniqueAirlines = useMemo<SearchSidebarProps['uniqueAirlines']>(() => {
-    const airlines = new Set(flights.map(f => f.airline));
+    const airlines = new Set(flights.flatMap(f => f.itineraries.map(i => i.airline)));
     return Array.from(airlines);
   }, [flights]);
 
@@ -31,11 +31,28 @@ export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
     const res = flights.filter(f => {
        if (f.amount > maxPrice) return false;
        
-       if (stopsFilter === '0' && f.stops !== 0) return false;
-       if (stopsFilter === '1' && f.stops !== 1) return false;
-       if (stopsFilter === '2+' && f.stops < 2) return false;
+       // Check if any itinerary matches the stops filter (or if all match? Usually max stops applies to any leg)
+       // Let's say if filter is Direct, we want ALL itineraries to be direct? Or just the outbound?
+       // Usually "Direct" filter means the entire journey has no stops.
 
-       if (selectedAirlines.length > 0 && !selectedAirlines.includes(f.airline)) return false;
+       // But wait, "1 stop" usually means 1 stop in one direction.
+       // Let's just check if ANY itinerary has more stops than allowed?
+       // Or simply: check specific itinerary stops?
+       // Common UX: "Max stops" applies to each leg.
+       
+       const maxStopsInAnyItinerary = Math.max(...f.itineraries.map(i => i.stops));
+
+       if (stopsFilter === '0' && maxStopsInAnyItinerary !== 0) return false;
+       if (stopsFilter === '1' && maxStopsInAnyItinerary !== 1) return false;
+       if (stopsFilter === '2+' && maxStopsInAnyItinerary < 2) return false;
+
+       if (selectedAirlines.length > 0) {
+          // If any operating airline is in the selected list? Or Validating airline?
+          // Using the airlines present in itineraries.
+          const flightAirlines = f.itineraries.map(i => i.airline);
+          const hasSelectedAirline = flightAirlines.some(code => selectedAirlines.includes(code));
+          if (!hasSelectedAirline) return false;
+       }
 
        return true;
     });
@@ -45,9 +62,10 @@ export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
     } else if (sort === 'price_desc') {
         res.sort((a, b) => b.amount - a.amount);
     } else if (sort === 'duration_asc') {
-        // Simple string comparison for PT is risky, simplified for now:
-        // In real app, convert duration to minutes in helper
-        res.sort((a, b) => a.duration.localeCompare(b.duration)); 
+        // Sort by total duration?
+        // Sum durations? Duration strings like PT2H are hard to sum without parsing.
+        // Let's just sort by outbound duration for now or first itinerary
+        res.sort((a, b) => a.itineraries[0].duration.localeCompare(b.itineraries[0].duration)); 
     }
 
     return res;

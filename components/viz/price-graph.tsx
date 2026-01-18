@@ -18,13 +18,16 @@ export function PriceGraph({ flights }: PriceGraphProps) {
   // Let's plot 'Cheapest Flight by Airline' or simply 'All Flights Price Curve'.
   
   // Let's sort flights by price and plot them to show the distribution curve.
-  const sortedData = [...flights].sort((a, b) => a.amount - b.amount).map((f, i) => ({
-    name: f.airlineCode, // Label on X axis?
-    price: f.amount,
-    airline: f.airline,
-    formattedPrice: formatCurrency(f.amount, f.currency),
-    index: i,
-  }));
+  const sortedData = [...flights].sort((a, b) => a.amount - b.amount).map((f, i) => {
+    const itinerary = f.itineraries[0];
+    return {
+      name: itinerary.airlineCode,
+      price: f.amount,
+      airline: itinerary.airline,
+      formattedPrice: formatCurrency(f.amount, f.currency),
+      index: i,
+    };
+  });
 
   if (flights.length === 0) {
     return (

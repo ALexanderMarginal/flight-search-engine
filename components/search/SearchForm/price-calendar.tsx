@@ -6,20 +6,19 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { PriceCalendarProps, PriceData } from './types';
 import { PriceCalendarMonth } from './price-calendar-month';
 import { format } from 'date-fns';
+import { parseLocalDate } from '@/utils';
 
-export const PriceCalendar = ({ value, change, close, origin, destination, placeholder }: PriceCalendarProps) => {
-  const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
+export const PriceCalendar = ({ value, change, close, origin, destination, placeholder, minDate, maxDate }: PriceCalendarProps) => {
+  const [currentMonth, setCurrentMonth] = useState(value ? parseLocalDate(value) : new Date());
   const [prices, setPrices] = useState<PriceData[]>([]);
   const [loading, setLoading] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);  
 
   const fetchPrices = async (queryOrigin: string, queryDestination: string) => {
       if (!queryOrigin || !queryDestination) return;
-      console.log('fetching prices for', queryOrigin, queryDestination, format(currentMonth, 'yyyy-MM-dd'));
       setLoading(true);
       try {
         const res = await fetch(`/api/flights/calendar?origin=${queryOrigin}&destination=${queryDestination}&date=${format(currentMonth, 'yyyy-MM-dd')}`);
-        console.log('prices', res);
         
         if (res.ok) {
           const data = await res.json();
@@ -87,6 +86,8 @@ export const PriceCalendar = ({ value, change, close, origin, destination, place
               value={value}
               change={change}
               close={close}
+              minDate={minDate}
+              maxDate={maxDate}
             />
             <div className='hidden md:block w-px bg-slate-100 dark:bg-slate-800 my-4'></div>
             <div className='hidden md:block'>
@@ -96,6 +97,8 @@ export const PriceCalendar = ({ value, change, close, origin, destination, place
                 value={value}
                 change={change}
                 close={close}
+                minDate={minDate}
+                maxDate={maxDate}
               />
             </div>
           </div>

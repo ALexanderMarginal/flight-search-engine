@@ -1,9 +1,9 @@
 import { cn } from '@/utils';
 import { PriceCalendarMonthProps } from './types';
-import { format, isSameMonth, isBefore, startOfDay } from 'date-fns';
+import { format, isSameMonth, isBefore, isAfter, startOfDay } from 'date-fns';
 import { getDaysForMonth } from '@/utils';
 
-export const PriceCalendarMonth = ({ date, prices, value, change, close }: PriceCalendarMonthProps) => {
+export const PriceCalendarMonth = ({ date, prices, value, change, close, minDate, maxDate }: PriceCalendarMonthProps) => {
   const days = getDaysForMonth(date);
   const monthName = format(date, 'MMMM yyyy');
   const monthPrices = prices.filter(p => isSameMonth(new Date(p.date), date));
@@ -22,7 +22,10 @@ export const PriceCalendarMonth = ({ date, prices, value, change, close }: Price
               const dateStr = format(day, 'yyyy-MM-dd');
               const priceData = prices.find(p => p.date === dateStr);
               const isSelected = value === dateStr;
-              const isDisabled = isBefore(day, startOfDay(new Date()));
+              const isPast = isBefore(day, startOfDay(new Date()));
+              const isBeforeMin = minDate ? isBefore(day, startOfDay(minDate)) : false;
+              const isAfterMax = maxDate ? isAfter(day, startOfDay(maxDate)) : false;
+              const isDisabled = isPast || isBeforeMin || isAfterMax;
               const isCheapest = priceData && minPrice && priceData.price === minPrice;
   
               return (
