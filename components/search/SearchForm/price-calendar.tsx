@@ -50,7 +50,7 @@ export const PriceCalendar = ({ value, change, close, origin, destination, place
 
   return (
     <div className='fixed w-full h-full p-10 top-0 left-0 z-50' ref={calendarRef}>
-       <div className='bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col w-full max-w-[800px] mx-auto'>
+       <div className='bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col w-full max-w-[800px] mx-auto my-10'>
           <div className='flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm'>
             <h3 className='font-semibold text-slate-900 dark:text-white flex items-center gap-2'>
               <span className='w-2 h-2 rounded-full bg-green-500 animate-pulse'></span>

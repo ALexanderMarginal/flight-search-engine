@@ -9,11 +9,14 @@ import { SearchSidebar } from './search-sidebar';
 
 interface SearchResultsProps {
   initialFlights: TransformedFlight[];
+  origin: string;
+  destination: string;
+  selectedDate: string;
 }
 
 type SortOption = 'price_asc' | 'price_desc' | 'duration_asc';
 
-export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
+export function SearchResults({ initialFlights: flights, origin, destination, selectedDate }: SearchResultsProps) {
   // Filters State
   const [maxPrice, setMaxPrice] = useState<number>(5000);
   const [stopsFilter, setStopsFilter] = useState<StopsFilter>(StopsFilter.All);
@@ -91,7 +94,7 @@ export function SearchResults({ initialFlights: flights }: SearchResultsProps) {
         
         {/* Visual Graph & Sorting Header */}
         <div className='grid gap-6'>
-           <PriceGraph flights={filteredFlights} />
+           <PriceGraph origin={origin} destination={destination} selectedDate={selectedDate} />
            
            <div className='flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200'>
               <p className='text-sm font-medium text-slate-500'>

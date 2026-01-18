@@ -35,7 +35,12 @@ export default async function SearchPage(props: PageProps) {
         <SearchForm/>
       </div>
     
-      <SearchResults initialFlights={flights} />
+      <SearchResults 
+        initialFlights={flights} 
+        origin={paramsSafe.origin}
+        destination={paramsSafe.destination}
+        selectedDate={paramsSafe.date}
+      />
     </Fragment>
   );
 }
