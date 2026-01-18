@@ -1,4 +1,4 @@
-import { SearchForm } from '@/components/search/SearchForm';
+import { SearchForm } from '@/components/search/search-form';
 import { Suspense } from 'react';
 
 export default function MarketingPage() {

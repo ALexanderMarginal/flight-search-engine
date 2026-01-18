@@ -16,13 +16,13 @@ interface PriceDataPoint {
   isLowest: boolean;
 }
 
-interface PriceGraphProps {
+interface PriceWidgetProps {
   origin: string;
   destination: string;
   selectedDate: string;
 }
 
-export function PriceGraph({ origin, destination, selectedDate }: PriceGraphProps) {
+export const PriceWidget = ({ origin, destination, selectedDate }: PriceWidgetProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [priceData, setPriceData] = useState<PriceDataPoint[]>([]);
@@ -121,9 +121,9 @@ export function PriceGraph({ origin, destination, selectedDate }: PriceGraphProp
   }
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: {active: boolean, payload: {payload: PriceDataPoint}[]}) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload as PriceDataPoint;
+      const data = payload[0].payload;
       return (
         <div className='bg-white px-3 py-2 rounded-lg shadow-lg border border-slate-200'>
           <p className='text-xs text-slate-500'>{data.dayOfWeek}, {data.formattedDate}</p>
@@ -204,7 +204,7 @@ export function PriceGraph({ origin, destination, selectedDate }: PriceGraphProp
               tickLine={false}
               width={45}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
+            <Tooltip content={<CustomTooltip active={false} payload={[]} />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
             
             {/* Reference line for average price */}
             <ReferenceLine 
@@ -218,7 +218,7 @@ export function PriceGraph({ origin, destination, selectedDate }: PriceGraphProp
               dataKey='price' 
               radius={[4, 4, 0, 0]}
               cursor='pointer'
-              onClick={(data: any) => handleBarClick(data as PriceDataPoint)}
+              onClick={(data: unknown) => handleBarClick(data as PriceDataPoint)}
             >
               {priceData.map((entry, index) => (
                 <Cell 

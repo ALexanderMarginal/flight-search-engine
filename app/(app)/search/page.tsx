@@ -1,6 +1,6 @@
-import { SearchResults } from '@/components/search/SearchResults/search-results';
+import { SearchResults } from '@/components/search/search-results';
 import { Fragment } from 'react';
-import { SearchForm } from '@/components/search/SearchForm';
+import { SearchForm } from '@/components/search/search-form';
 import { SearchParams } from '@/types/amadeus.types';
 import { amadeusApi } from '@/app/api/amadeus';
 

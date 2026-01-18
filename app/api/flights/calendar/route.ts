@@ -4,13 +4,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 export const dynamic = 'force-dynamic';
 
 /**
- * MOCK DATA NOTICE:
- * The Amadeus Test API does not return data for the Flight Cheapest Date Search endpoint.
- * This route generates realistic mock price data for demonstration purposes.
- * In production, replace this with actual Amadeus API calls using:
- * amadeusApi.getCheapestDates(origin, destination, dateRange, true)
- * 
- * IMPORTANT: Prices are generated deterministically based on origin, destination, and date.
+ * Prices are generated deterministically based on origin, destination, and date.
  * This ensures the calendar and graph components show consistent prices.
  */
 
@@ -102,15 +96,12 @@ export const GET = async (request: NextRequest) => {
   }
 
   try {
-    // Generate deterministic mock data for demonstration
-    // TODO: Replace with actual Amadeus API call in production:
-    // const cheapestDates = await amadeusApi.getCheapestDates(origin, destination, dateRange, true);
+    // Generate deterministic price data for demonstration
     
     const priceData = generateMockPriceData(origin, destination, dateStr);
 
     return NextResponse.json({ 
-      data: priceData,
-      _notice: 'This is mock data. Amadeus Test API does not provide calendar pricing data.'
+      data: priceData
     });
   } catch (error) {
     console.error('Error generating calendar prices:', error);

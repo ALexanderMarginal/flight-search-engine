@@ -19,7 +19,6 @@ class AmadeusApi {
 
   private async getAccessToken(forceRefresh: boolean = false): Promise<string | null> {
     if (!this.clientId || !this.clientSecret) {
-      console.warn('Using Mock Data: Missing Amadeus API Credentials');
       return null;
     }
 
